@@ -1,7 +1,7 @@
 version: "3"
 services:
   nginx_web:
-    image: nginx_blade:1.0
+    image: blade_nginx:1.1
     ports:
       - "5555:80"
     volumes:

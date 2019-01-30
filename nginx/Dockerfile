@@ -13,5 +13,5 @@ WORKDIR ${WORKPATH}
 COPY . . 
 RUN cp ./nginx.conf /etc/nginx/
 
-CMD nginx -g daemon off
+CMD ["nginx", "-g", "daemon off;"]
 
