@@ -1,0 +1,66 @@
+version: "3"
+services:
+  nginx_web:
+    image: nginx_blade:1.0
+    ports:
+      - "5555:80"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    networks:
+      - internal-blade
+    links:
+      - blade_app1
+      - blade_app2
+  blade_app1:
+    image: blade:v1.1
+    environment:
+      - "DATABASE_USERNAME=root"
+      - "DATABASE_PASSWORD=root"
+      - "DATABASE_HOST=blade-db"
+      - "DATABASE_DB_NAME=blade"
+      - "RAILS_ENV=staging"
+      - "REDIS_HOST=blade-redis"
+    ports:
+      - "4001:80"
+    links:
+      - blade-db
+    networks:
+      - internal-blade
+    restart: unless-stopped
+  blade_app2:
+    image: blade:v1.1
+    environment:
+      - "DATABASE_USERNAME=root"
+      - "DATABASE_PASSWORD=root"
+      - "DATABASE_HOST=blade-db"
+      - "DATABASE_DB_NAME=blade"
+      - "RAILS_ENV=staging"
+      - "REDIS_HOST=blade-redis"
+    ports:
+      - "4002:80"
+    links:
+      - blade-db
+    networks:
+      - internal-blade
+    restart: unless-stopped
+  blade-db:
+    image: mysql:5.6
+    ports:
+      - "33401:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_ROOT_HOST=0.0.0.0
+    volumes:
+      - ./blade_db:/data
+    networks:
+      - internal-blade
+    restart: unless-stopped
+  blade-redis:
+    image: redis
+    ports:
+      - "33402:6379"
+    networks:
+      - internal-blade  
+    restart: unless-stopped
+networks:
+  internal-blade:
