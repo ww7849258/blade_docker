@@ -1,9 +1,9 @@
 version: "3"
 services:
   nginx_web:
-    image: blade_nginx:1.1
+    image: ww7849258/blade_nginx:1.2.0
     ports:
-      - "5555:80"
+      - "80:80"
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d
     networks:
@@ -11,8 +11,9 @@ services:
     links:
       - blade_app1
       - blade_app2
+    restart: unless-stopped
   blade_app1:
-    image: blade:v1.1
+    image: ww7849258/blade:1.2.1
     environment:
       - "DATABASE_USERNAME=root"
       - "DATABASE_PASSWORD=root"
@@ -28,7 +29,7 @@ services:
       - internal-blade
     restart: unless-stopped
   blade_app2:
-    image: blade:v1.1
+    image: ww7849258/blade:1.2.1
     environment:
       - "DATABASE_USERNAME=root"
       - "DATABASE_PASSWORD=root"
@@ -46,21 +47,24 @@ services:
   blade-db:
     image: mysql:5.6
     ports:
-      - "33401:3306"
+      - "33306:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_ROOT_HOST=0.0.0.0
     volumes:
       - ./blade_db:/data
+      - db-data:/var/lib/mysql
     networks:
       - internal-blade
     restart: unless-stopped
   blade-redis:
     image: redis
     ports:
-      - "33402:6379"
+      - "36379:6379"
     networks:
       - internal-blade  
     restart: unless-stopped
 networks:
   internal-blade:
+volumes:
+  db-data:
